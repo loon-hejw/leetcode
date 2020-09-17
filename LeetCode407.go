@@ -1,56 +1,120 @@
 package main
 
-import "fmt"
+import (
+	"container/heap"
+	"fmt"
+	"strconv"
+)
 
 func trapRainWater(heightMap [][]int) int {
-	if len(heightMap) < 3 || len(heightMap[0]) < 3 { return 0 }
-	min := func ( a ,b int) int {
-		if  a > b {
-			return b
+
+	max := func(a, b int) int {
+		if a > b {
+			return a
 		}
-		return a
+		return b
 	}
-	// 初始变量
-	ans := 0
-	for i := 1 ; i < len(heightMap) - 1 ; i ++ {
-		height := heightMap[i]
-		l,r := 0 , len(height) - 1
-		// 寻找边界
-		for l < r && height[l] <= height[l + 1] { l ++ }
-		for l < r && height[r] <= height[r - 1] { r -- }
-		left , right , top , dump := 0 , 0 , 0 , 0
-		for l < r {
-			left = height[l]
-			right = height[r]
-
-			if left <= right {
-				for l = l + 1 ; l < r && left >= height[l] ; l ++ {
-					u  , t := 0 , len(heightMap) - 1
-					for  u < i && heightMap[u][l] <= heightMap[u + 1][l] { u ++ }
-					for  t > i && heightMap[t][l] <= heightMap[t - 1][l] { t -- }
-					top = heightMap[u][l] ; dump = heightMap[t][l]
-					minH := min(min(top,dump),left)
-					if  minH >= height[l] {
-						ans = ans + (minH - height[l])
-					}
-				}
-			} else {
-				for r = r - 1 ; l < r && right >= height[r]; r --  {
-					u  , t := 0 , len(heightMap) - 1
-					for  u < i && heightMap[u][r] <= heightMap[u + 1][r] { u ++ }
-					for  t > i && heightMap[t][r] <= heightMap[t - 1][r] { t -- }
-					top = heightMap[u][r] ; dump = heightMap[t][r]
-
-					minH := min(min(top,dump),right)
-					if  minH >= height[r] {
-						ans = ans + (minH - height[r])
-					}
-				}
+	if len(heightMap) < 3 || len(heightMap[0]) < 3 {
+		return 0
+	}
+	visit := make([][]bool, len(heightMap))
+	for i := range visit {
+		visit[i] = make([]bool, len(heightMap[0]))
+	}
+	pq := make(PriorityQueue, 0)
+	for i := 0; i < len(heightMap); i++ {
+		pq = append(pq, &Item{
+			value: heightMap[i][0],
+			i:     i,
+			j:     0,
+		})
+		visit[i][0] = true
+		pq = append(pq, &Item{
+			value: heightMap[i][len(heightMap[0])-1],
+			i:     i,
+			j:     len(heightMap[0]) - 1,
+		})
+		visit[i][len(heightMap[0])-1] = true
+	}
+	for i := 1; i < len(heightMap[0])-1; i++ {
+		pq = append(pq, &Item{
+			value: heightMap[0][i],
+			i:     0,
+			j:     i,
+		})
+		visit[0][i] = true
+		pq = append(pq, &Item{
+			value: heightMap[len(heightMap)-1][i],
+			i:     len(heightMap) - 1,
+			j:     i,
+		})
+		visit[len(heightMap)-1][i] = true
+	}
+	heap.Init(&pq)
+	dirs := [][]int{{0, 1}, {0, -1}, {1, 0}, {-1, 0}}
+	ret := 0
+	for pq.Len() > 0 {
+		item := heap.Pop(&pq).(*Item)
+		for _, dir := range dirs {
+			i, j := item.i+dir[0], item.j+dir[1]
+			if i >= 0 && i < len(heightMap) && j >= 0 && j < len(heightMap[0]) && !visit[i][j] {
+				ret += max(0, item.value-heightMap[i][j])
+				visit[i][j] = true
+				heap.Push(&pq, &Item{
+					value: max(item.value, heightMap[i][j]),
+					i:     i,
+					j:     j,
+				})
 			}
 		}
 	}
-	return ans
+	return ret
 }
+
+
+
+type Item struct {
+	value int
+	i     int
+	j     int
+}
+
+func (i *Item) String() string {
+	return strconv.Itoa(i.value)
+}
+
+// A PriorityQueue implements heap.Interface and holds Items.
+type PriorityQueue []*Item
+
+func (pq PriorityQueue) Len() int { return len(pq) }
+
+func (pq PriorityQueue) Less(i, j int) bool {
+	return pq[i].value < pq[j].value
+}
+
+func (pq PriorityQueue) Swap(i, j int) {
+	pq[i], pq[j] = pq[j], pq[i]
+}
+
+func (pq *PriorityQueue) Push(x interface{}) {
+	item := x.(*Item)
+	*pq = append(*pq, item)
+}
+
+func (pq *PriorityQueue) Pop() interface{} {
+	old := *pq
+	n := len(old)
+	item := old[n-1]
+	old[n-1] = nil // avoid memory leak
+	*pq = old[0 : n-1]
+	return item
+}
+
+
 func main() {
-	fmt.Println(trapRainWater([][]int{{12,13,1,12},{13,4,13,12},{13,8,10,12},{12,13,12,12},{13,13,13,13}}))
+	fmt.Println(trapRainWater([][]int{{12, 13, 1, 12},
+		                              {13, 4, 13, 12},
+		                              {13, 8, 10, 12},
+		                              {12, 13, 12, 12},
+		                              {13, 13, 13, 13}}))
 }

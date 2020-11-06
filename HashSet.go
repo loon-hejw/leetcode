@@ -54,6 +54,7 @@ func getHashSet() *HashSet {
 
 func main() {
 	mySet := getHashSet()
+	fmt.Println(mySet.Get())
 	fmt.Println(mySet.Inset("1111111"))
 	mySet.Set("11111111")
 	fmt.Println(mySet.GetLenght())

@@ -10,7 +10,7 @@ import "fmt"
   能够在o(1)的时间复杂度判断出是否存在集合中
 
   能够在o(1)的时间复杂度集合的长度
- */
+*/
 
 type HashSet struct {
 	length int
@@ -25,11 +25,11 @@ func (this *HashSet) GetLenght() int {
 func (this *HashSet) Set(val interface{}) {
 	if !this.set[val] {
 		this.length = this.length + 1
-		this.val = append(this.val , val)
+		this.val = append(this.val, val)
 	}
 }
 
-func (this *HashSet) Get () interface{} {
+func (this *HashSet) Get() interface{} {
 	var r interface{}
 	if this.length > 0 {
 		r = this.val[0]
@@ -40,21 +40,21 @@ func (this *HashSet) Get () interface{} {
 	return r
 }
 
-func (this *HashSet) inset (val interface{}) bool {
+func (this *HashSet) Inset (val interface{}) bool {
 	return this.set[val]
 }
 
 func getHashSet() *HashSet {
 	return &HashSet{
-		length : 0,
-		set    : map[interface{}]bool{},
-		val    : []interface{}{},
+		length: 0,
+		set:    map[interface{}]bool{},
+		val:    []interface{}{},
 	}
 }
 
 func main() {
 	mySet := getHashSet()
-	fmt.Println(mySet.inset("1111111"))
+	fmt.Println(mySet.Inset("1111111"))
 	mySet.Set("11111111")
 	fmt.Println(mySet.GetLenght())
 	fmt.Println(mySet.Get())

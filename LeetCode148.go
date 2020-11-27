@@ -22,7 +22,7 @@ func mergaNode ( head1 , head2 *ListNode) *ListNode {
 	return dummyHead.Next
 }
 
-func sort(head, tail *ListNode) *ListNode {
+func SortNode(head, tail *ListNode) *ListNode {
 
 	if head == nil {
 		return head
@@ -43,11 +43,11 @@ func sort(head, tail *ListNode) *ListNode {
 	}
 
 	mid := slow
-	return mergaNode(sort(head,mid) , sort(mid , tail))
+	return mergaNode(SortNode(head,mid) , SortNode(mid , tail))
 }
 
 func sortList(head *ListNode) *ListNode {
-	return sort(head , nil)
+	return SortNode(head , nil)
 }
 
 

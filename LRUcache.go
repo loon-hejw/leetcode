@@ -1,5 +1,6 @@
 package main
 
+//noinspection ALL
 type LRUCache struct {
 	size int
 	capacity int

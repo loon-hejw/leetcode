@@ -1,6 +1,9 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"strconv"
+)
 
 type N int
 func v(n N) {
@@ -14,9 +17,9 @@ func v1(n *N) {
 }
 
 func main() {
-	var n N
-	n = 1
-	v(n)
-	v1(&n)
-	fmt.Println( "n %v:%p" ,&n , n)
+
+ t  , err := strconv.ParseFloat("23.98",64)
+
+ fmt.Println(t)
+ fmt.Println(err)
 }

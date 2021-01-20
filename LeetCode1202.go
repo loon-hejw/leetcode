@@ -1,6 +1,9 @@
 package main
 
-import "sort"
+import (
+	"fmt"
+	"sort"
+)
 
 type DisjSets struct {
 	data    []int
@@ -47,7 +50,7 @@ func smallestStringWithSwaps(s string, pairs [][]int) string {
 		disj.Union(pairs[i][0], pairs[i][1])
 	}
 	m := disj.GroupBy()
-	for _, ts := range m {
+	for _ , ts := range m {
 		t := make([]int, len(ts))
 		copy(t, ts)
 		sort.Slice(t, func(i, j int) bool {
@@ -62,5 +65,5 @@ func smallestStringWithSwaps(s string, pairs [][]int) string {
 
 
 func main() {
-	
+	fmt.Println(smallestStringWithSwaps("dcab" , [][]int{{0,3},{1,2},{0,2}}))
 }

@@ -21,8 +21,6 @@ func maxProfit2(prices []int, fee int) int {
 	}
 	return dp[lenght - 1][0]
 }
-// todo
-
 
 func main() {
 	fmt.Println(maxProfit2([]int{1,3,2,8,4,9} , 2))

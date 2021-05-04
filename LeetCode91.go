@@ -1,29 +1,27 @@
 package main
 
-import (
-	"fmt"
-)
+import "fmt"
 
 func numDecodings(s string) int {
-	for i := 0 ; i < len(s) ; i ++ {
-		fmt.Println(s[i:])
+
+	m := len(s)
+	dp := make([]int , m + 1)
+	dp[0] = 1
+
+	for i := 1 ; i <= m ; i ++ {
+
+		if s[i - 1] != '0' {
+			dp[i] += dp[i - 1]
+		}
+
+		if i > 1 && s[i - 2] != '0' && ( (s[i - 2] - '0') * 10 + (s[i - 1] - '0') <= 26 ) {
+			dp[i] += dp[i - 2]
+		}
 	}
-	return 0 ;
+
+	return dp[m]
 }
 
-func helper2(s string , n int) int {
-
-	if n == 0 {
-		return 0
-	}
-	fmt.Println(s)
-	for i := 0 ; i < n ; i++ {
-		c := ""
-		copy([]uint8(fmt.Sprint(s[i:])),c)
-		helper2(c,len(s) - i)
-	}
-	return 0
-}
 func main() {
-	helper2("226",3)
+	fmt.Println(numDecodings("226"))
 }

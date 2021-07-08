@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"net/http"
 	"sort"
 )
 
@@ -55,5 +56,30 @@ func smallestStringWithSwaps2(s string, pairs [][]int) string {
 }
 
 func main() {
-	fmt.Println(smallestStringWithSwaps2("dcab", [][]int{{0, 3}, {1, 2}, {0, 2}}))
+
+
+	mux := http.NewServeMux()
+
+	mux.HandleFunc("/" , middleware(func(writer http.ResponseWriter, request *http.Request) {
+		if request.Method != "POST" {
+			writer.Write([]byte("NO ROUTE"))
+			return
+		}
+		fmt.Println(request.Header.Get("channel"))
+		writer.Write([]byte("123"))
+		return
+	}))
+
+	http.ListenAndServe(":12580", mux)
+}
+
+func middleware(f http.HandlerFunc) http.HandlerFunc {
+	return  func(w http.ResponseWriter, r *http.Request) {
+		// 增加解决跨域
+		w.Header().Set("Access-Control-Allow-Headers", "*")
+		w.Header().Set("Access-Control-Allow-Methods", "GET,POST,PUT,OPTIONS,DELETE,OPTIONS")
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Request-Method", "GET,POST,PUT,OPTIONS,DELETE,OPTIONS")
+		f(w, r)
+	}
 }

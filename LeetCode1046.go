@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"sort"
 )
+
 type hp struct{ sort.IntSlice }
 
 func (h hp) Less(i, j int) bool  { return h.IntSlice[i] > h.IntSlice[j] }
